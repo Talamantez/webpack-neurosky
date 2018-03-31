@@ -1,3 +1,5 @@
+// backend server
+
 const express = require('express');
 const Mindwave = require('mindwave');
 const kefir = require('kefir');
@@ -17,15 +19,6 @@ const app = express();
 const server = require('http').Server(app);
 
 const io = require('socket.io')(server);
-
-// app.use(express.static(__dirname + '/app'));
-app.use(sendViewMiddleware);
-
-
-app.get('/', function(req, res) {
-    res.sendView('/dist/index.html')
-});
-
 
 server.listen(process.env.PORT || 4000);
 
@@ -73,10 +66,3 @@ io.on('connection', function(socket) {
         socket.emit('data', outS);
     });
 });
-
-function sendViewMiddleware(req, res, next) {
-    res.sendView = function(view) {
-        return res.sendFile(__dirname + view);
-    }
-    next();
-}
