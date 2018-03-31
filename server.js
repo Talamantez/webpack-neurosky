@@ -18,13 +18,13 @@ const server = require('http').Server(app);
 
 const io = require('socket.io')(server);
 
-// app.use(express.static(__dirname + '/app'));
-app.use(sendViewMiddleware);
+app.use(express.static(__dirname + '/dist'));
+// app.use(sendViewMiddleware);
 
 
-app.get('/', function(req, res) {
-    res.sendView('/dist/index.html')
-});
+// app.get('/', function(req, res) {
+//     res.sendView('/dist/index.html')
+// });
 
 
 server.listen(process.env.PORT || 4000);
