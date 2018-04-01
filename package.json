@@ -18,10 +18,14 @@
   },
   "dependencies": {
     "express": "^4.16.3",
+    "flux-standard-action": "^2.0.1",
     "fs": "^0.0.1-security",
     "kefir": "^3.8.3",
     "lodash": "^4.17.5",
     "mindwave": "^0.0.4",
+    "react": "^16.3.0",
+    "react-redux": "^5.0.7",
+    "redux": "^3.7.2",
     "socketio": "^1.0.0",
     "three": "^0.91.0",
     "url-loader": "^1.0.1"

@@ -2,23 +2,72 @@ import _ from 'lodash';
 import Kefir from 'kefir';
 import io from 'socket.io-client';
 import * as THREE from 'three';
+import React from 'react';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { createStore } from 'redux';
+import { isFSA } from 'flux-standard-action';
+import { isError } from 'flux-standard-action';
+import { combineReducers } from 'redux'
 
-function component(){
-  var element = document.createElement('div');
-
-  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
-
-  return element;
+const initialState = {
+  attention: 0
 }
 
-document.body.appendChild(component());
+const store = createStore(brainApp);
+console.log(store.getState()); // 0
+
+let attention = 0;
+let testAttention;
+
+const SET_ATTENTION = 'SET_ATTENTION';
+
+// action creator: update attention
+function updateAttention(number){
+    return{
+      type: 'UPDATE_ATTENTION'
+    }
+}
+
+// component
+class AttentionContainer extends Component{
+  constructor(props){
+    super(props);
+
+    const { dispatch } = props;
+
+    this.boundActionCreators = bindActionCreators([updateAttention], dispatch)
+    console.log(this.boundActionCreators);
+  }
+
+  componentDidMount(){
+    let { dispatch } = this.props;
+    let action = updateAttention(50);
+    dispatch(action)
+  }
+  render(){
+    let { attention } = this.props;
+    return <AttentionContainer attention={attention} {...this.boundActionCreators} />
+  }
+}
+
+connect(
+  state => ({ attention: state.attention })
+)(AttentionContainer)
+
+// app
+function brainApp(state = {attention:0}, action) {
+  return {
+
+  }
+}
 
 /*
  * Socket IO stuff
  */
+
 console.log('hi');
-var attention = 0;
-var testAttention;
 
 const socket = io('http://127.0.0.1:4000');
 
@@ -41,7 +90,7 @@ const start = new Date();
 
 var stream = Kefir.withInterval(1000, emitter => {
     const time = new Date() - start;
-    if (time < 100000) {
+    if (time < 10000000) {
         socket.emit('getData');
     } else {
         emitter.end(); // end the stream
@@ -61,7 +110,7 @@ var refreshAttention = function(data){
             } else {
                 console.log('attention reading:');
                 console.log(attention);
-                refreshFrontEnd();                
+                refreshFrontEnd();
             }
         } else{
           console.log('ERR: refreshAttention(data), data not found ');
@@ -78,6 +127,9 @@ function refreshFrontEnd(){
 
 socket.on('data', refreshAttention);
 
+
+
+// THREE.js stuff
 var container;
 var camera, controls, scene, renderer, geometry, difference;
 var objects = [];
