@@ -19,12 +19,7 @@ document.body.appendChild(component());
 console.log('hi');
 var attention = 0;
 var testAttention;
-// Get Data at 1Hz, DO NOT USE THIS TIMER IN PRODUCTION -
-// setInterval(function() {
-//     console.log('running socket.emit("getData")');
-//     socket.emit('getData');
-//     refreshFrontEnd();
-// }, 2000);
+
 const socket = io('http://127.0.0.1:4000');
 
 const sayData = function(data) {
@@ -66,14 +61,14 @@ var refreshAttention = function(data){
             } else {
                 console.log('attention reading:');
                 console.log(attention);
+                refreshFrontEnd();                
             }
         } else{
           console.log('ERR: refreshAttention(data), data not found ');
         }
     } else {
-      console.log('data._source._buffers[3][0] is bad' )
+      console.log('data._source._buffers[3][0] did not return a value' )
     }
-    refreshFrontEnd();
 }
 
 function refreshFrontEnd(){
