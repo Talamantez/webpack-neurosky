@@ -3,7 +3,6 @@ import Kefir from 'kefir';
 import io from 'socket.io-client';
 import * as THREE from 'three';
 
-console.dir(io);
 function component(){
   var element = document.createElement('div');
 
@@ -74,7 +73,7 @@ var refreshAttention = function(data){
     } else {
       console.log('data._source._buffers[3][0] is bad' )
     }
-    refreshFrontEnd();    
+    refreshFrontEnd();
 }
 
 function refreshFrontEnd(){
