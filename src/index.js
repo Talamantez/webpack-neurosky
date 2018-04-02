@@ -18,8 +18,7 @@ const initialState = {
   attention: 0
 }
 
-const store = createStore(brainApp);
-console.log(store.getState()); // 0
+const store = createStore(attentionApp);
 
 let attention = 0;
 let testAttention;
@@ -29,48 +28,54 @@ const SET_ATTENTION = 'SET_ATTENTION';
 // action creator: update attention
 function updateAttention(number){
     return{
-      type: 'UPDATE_ATTENTION'
+      type: SET_ATTENTION,
+      number
+    }
+}
+
+// app
+function attentionApp(state = initialState, action) {
+  // does not loop
+    switch(action.type){
+      case 'SET_ATTENTION':
+        return Object.assign({}, state, {
+          attention: action.number
+        })
+      default:
+        return state;
     }
 }
 
 // component
-class AttentionContainer extends Component{
-  constructor(props){
-    super(props);
+// class AttentionContainer extends Component{
+//   constructor(props){
+//     super(props);
+//
+//     const { dispatch } = props;
+//
+//     this.boundActionCreators = bindActionCreators([updateAttention], dispatch)
+//     console.log(this.boundActionCreators);
+//   }
+//
+//   componentDidMount(){
+//     let { dispatch } = this.props;
+//     let action = updateAttention(50);
+//     dispatch(action)
+//   }
+//   render(){
+//     let { attention } = this.props;
+//     return <AttentionContainer attention={attention} {...this.boundActionCreators} />
+//   }
+// }
+//
+// connect(
+//   state => ({ attention: state.attention })
+// )(AttentionContainer)
 
-    const { dispatch } = props;
-
-    this.boundActionCreators = bindActionCreators([updateAttention], dispatch)
-    console.log(this.boundActionCreators);
-  }
-
-  componentDidMount(){
-    let { dispatch } = this.props;
-    let action = updateAttention(50);
-    dispatch(action)
-  }
-  render(){
-    let { attention } = this.props;
-    return <AttentionContainer attention={attention} {...this.boundActionCreators} />
-  }
-}
-
-connect(
-  state => ({ attention: state.attention })
-)(AttentionContainer)
-
-// app
-function brainApp(state = {attention:0}, action) {
-  return {
-
-  }
-}
 
 /*
  * Socket IO stuff
  */
-
-console.log('hi');
 
 const socket = io('http://127.0.0.1:4000');
 
@@ -93,6 +98,8 @@ const start = new Date();
 
 let stream = Kefir.withInterval(1000, emitter => {
     const time = new Date() - start;
+    console.log(store.getState());
+
     if (time < 10000000) {
         socket.emit('getData');
     } else {
@@ -102,18 +109,18 @@ let stream = Kefir.withInterval(1000, emitter => {
 stream.log();
 
 let refreshAttention = function(data){
-    console.log('\nraw attention object:')
-    console.log(data._source._buffers[3][0]);
+    // console.log('\nraw attention object:')
+    // console.log(data._source._buffers[3][0]);
     if (data._source._buffers[3][0]) {
         if (data._source._buffers[3][0]["attention"]) {
             // console.log('attention found');
             attention = data._source._buffers[3][0]["attention"];
             if (attention < 10) {
-                console.log('attention < 10 reading dumped');
+                // console.log('attention < 10 reading dumped');
             } else {
-                console.log('attention reading:');
-                console.log(attention);
-                refreshFrontEnd();
+                // console.log('attention reading:');
+                // console.log(attention);
+                refreshFrontEnd(attention);
             }
         } else{
           console.log('ERR: refreshAttention(data), data not found ');
@@ -123,12 +130,42 @@ let refreshAttention = function(data){
     }
 }
 
-function refreshFrontEnd(){
-  drawCubes(geometry, attention);
-  console.log('refreshFrontEnd running');
+function refreshFrontEnd(number){
+  // console.log('\n');
+  // console.log('store');
+  // console.log(store.getState());
+
+  // drawCubes(geometry, attention);
 }
 
-socket.on('data', refreshAttention);
+
+// DATA ENTRY POINT
+socket.on('data', function(data){
+  let index = data._source._buffers[3][0]['attention']
+  if(index && typeof index === 'number'){
+    // console.log('\n'+ 'index: ' + index + '\n');
+    store.dispatch(updateAttention(index));
+    // console.log('\n| state - |\n');
+    // console.log(store.getState());
+  }
+  return;
+  // refreshAttention(data);
+});
+
+/* action sequence:
+      'data'
+          refreshAttention(data)
+              -> get attention from data <--
+              refreshFrontEnd(attention)
+                  store.dispatch(
+                    updateAttention(attention)
+                )
+                  drawCubes(geometry attention)
+
+
+
+
+*/
 
 // THREE.js stuff
 let container;
@@ -158,8 +195,8 @@ function init() {
     // controls.dynamicDampingFactor = 0.3;
 
     scene = new THREE.Scene();
-    console.log('scene:');
-    console.dir(scene);
+    // console.log('scene:');
+    // console.dir(scene);
     scene.background = new THREE.Color(0xf0f0f0);
 
     scene.add(new THREE.AmbientLight(0x505050));
@@ -209,8 +246,8 @@ function init() {
 }
 
 function drawCubes(geometry, attention) {
-    console.log('testAttention: ' + testAttention);
-    console.log('attention: ' + attention);
+    // console.log('testAttention: ' + testAttention);
+    // console.log('attention: ' + attention);
     if (loopCount === 0) {
         console.log('loopin')
         for (let i = 0; i < attention; i++) {
@@ -244,7 +281,7 @@ function drawCubes(geometry, attention) {
     }
     if (testAttention > attention) {
         difference = testAttention - attention;
-        console.log("\n\n\n" + "You're COOOOLING -" + difference + "\n\n");
+        // console.log("\n\n\n" + "You're COOOOLING -" + difference + "\n\n");
         for (let i = 0; i < objects.length; i++) {
             objects[i].material.transparent = true;
             objects[i].material.opacity = 0.5;
@@ -252,7 +289,7 @@ function drawCubes(geometry, attention) {
     }
     if (testAttention < attention) {
         difference = attention - testAttention;
-        console.log('\n\n\n' + 'GAINERER!!! +' + difference + '\n\n\n');
+        // console.log('\n\n\n' + 'GAINERER!!! +' + difference + '\n\n\n');
         for (let i = 0; i < testAttention; i++) {
             let object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
             object.position.x = Math.random() * 1000 - 500;
