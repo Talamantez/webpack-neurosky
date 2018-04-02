@@ -15,7 +15,8 @@ import ReactDom from 'react-dom';
 
 
 const initialState = {
-  attention: 0
+  attention: 0,
+  lastAttention: 0
 }
 
 const store = createStore(attentionApp);
@@ -39,7 +40,9 @@ function attentionApp(state = initialState, action) {
     switch(action.type){
       case 'SET_ATTENTION':
         return Object.assign({}, state, {
-          attention: action.number
+          attention: action.number,
+          lastAttention: state.attention,
+          change: -(state.attention-action.number)
         })
       default:
         return state;
