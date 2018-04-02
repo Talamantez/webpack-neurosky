@@ -9,7 +9,10 @@ import { bindActionCreators } from 'redux';
 import { createStore } from 'redux';
 import { isFSA } from 'flux-standard-action';
 import { isError } from 'flux-standard-action';
-import { combineReducers } from 'redux'
+import { combineReducers } from 'redux';
+import 'babel-polyfill';
+import ReactDom from 'react-dom';
+
 
 const initialState = {
   attention: 0
@@ -88,7 +91,7 @@ const sayData = function(data) {
 
 const start = new Date();
 
-var stream = Kefir.withInterval(1000, emitter => {
+let stream = Kefir.withInterval(1000, emitter => {
     const time = new Date() - start;
     if (time < 10000000) {
         socket.emit('getData');
@@ -98,7 +101,7 @@ var stream = Kefir.withInterval(1000, emitter => {
 });
 stream.log();
 
-var refreshAttention = function(data){
+let refreshAttention = function(data){
     console.log('\nraw attention object:')
     console.log(data._source._buffers[3][0]);
     if (data._source._buffers[3][0]) {
@@ -127,14 +130,12 @@ function refreshFrontEnd(){
 
 socket.on('data', refreshAttention);
 
-
-
 // THREE.js stuff
-var container;
-var camera, controls, scene, renderer, geometry, difference;
-var objects = [];
-var loopCount = 0;
-var masterscope = {};
+let container;
+let camera, controls, scene, renderer, geometry, difference;
+let objects = [];
+let loopCount = 0;
+let masterscope = {};
 
 init();
 animate();
@@ -163,7 +164,7 @@ function init() {
 
     scene.add(new THREE.AmbientLight(0x505050));
 
-    var light = new THREE.SpotLight(0xffffff, 1.5);
+    let light = new THREE.SpotLight(0xffffff, 1.5);
     light.position.set(0, 500, 2000);
     light.castShadow = true;
 
@@ -188,11 +189,11 @@ function init() {
 
     container.appendChild(renderer.domElement);
 
-    // var dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
+    // let dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
     // dragControls.addEventListener('dragstart', function(event) { controls.enabled = false; });
     // dragControls.addEventListener('dragend', function(event) { controls.enabled = true; });
 
-    var info = document.createElement('div');
+    let info = document.createElement('div');
     info.style.position = 'absolute';
     info.style.top = '10px';
     info.style.width = '100%';
@@ -212,9 +213,9 @@ function drawCubes(geometry, attention) {
     console.log('attention: ' + attention);
     if (loopCount === 0) {
         console.log('loopin')
-        for (var i = 0; i < attention; i++) {
+        for (let i = 0; i < attention; i++) {
             console.log('in Draw Cubes');
-            var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
+            let object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
 
             object.position.x = Math.random() * 1000 - 500;
             object.position.y = Math.random() * 600 - 300;
@@ -237,14 +238,14 @@ function drawCubes(geometry, attention) {
         }
     }
     if (attention < 40) {
-        for (var i = objects.length; i > attention; i--) {
+        for (let i = objects.length; i > attention; i--) {
             scene.remove(objects[i]);
         }
     }
     if (testAttention > attention) {
         difference = testAttention - attention;
         console.log("\n\n\n" + "You're COOOOLING -" + difference + "\n\n");
-        for (var i = 0; i < objects.length; i++) {
+        for (let i = 0; i < objects.length; i++) {
             objects[i].material.transparent = true;
             objects[i].material.opacity = 0.5;
         }
@@ -252,8 +253,8 @@ function drawCubes(geometry, attention) {
     if (testAttention < attention) {
         difference = attention - testAttention;
         console.log('\n\n\n' + 'GAINERER!!! +' + difference + '\n\n\n');
-        for (var i = 0; i < testAttention; i++) {
-            var object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
+        for (let i = 0; i < testAttention; i++) {
+            let object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
             object.position.x = Math.random() * 1000 - 500;
             object.position.y = Math.random() * 600 - 300;
             object.position.z = Math.random() * 800 - 400;
