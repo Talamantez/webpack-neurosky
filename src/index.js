@@ -11,8 +11,12 @@ import _ from 'lodash';
 import io from 'socket.io-client';
 import 'babel-polyfill';
 import * as THREE from 'three';
+// import AttentionContainer from './components/AttentionContainer'
+import Button from './components/Button'
+
 const socket = io('http://127.0.0.1:4000'); // initialize websocket
 let attention = 0; // initialize attention value
+
 
 const SET_ATTENTION = 'SET_ATTENTION'; // set action value
 // initialize App state
@@ -58,6 +62,9 @@ setInterval(function () {
   console.log(store.getState())
   socket.emit('getData')
 }, 1000)
+
+// get rendery with it
+ReactDom.render('root', Button)
 
 // function refreshFrontEnd(number){
 
