@@ -8,11 +8,11 @@ import { connect } from 'react-redux';
 import { isFSA } from 'flux-standard-action';
 import { isError } from 'flux-standard-action';
 import _ from 'lodash';
-import Kefir from 'kefir';
 import io from 'socket.io-client';
 import 'babel-polyfill';
 import * as THREE from 'three';
 const socket = io('http://127.0.0.1:4000'); // initialize websocket
+let attention = 0; // initialize attention value
 
 const SET_ATTENTION = 'SET_ATTENTION'; // set action value
 // initialize App state
@@ -22,13 +22,6 @@ const initialState = {
 }
 const store = createStore(attentionApp); // initialize store
 const start = new Date(); // set timer datum
-// call
-let stream = Kefir.withInterval(1000, emitter => {
-  const time = new Date() - start;
-  console.log(store.getState());
-  socket.emit('getData');
-});
-stream.log(); // log the stream
 // app
 function attentionApp(state = initialState, action) {
     switch(action.type){
@@ -51,12 +44,20 @@ function updateAttention(number){
 }
 // DATA ENTRY POINT
 socket.on('data', function(data){
-  let attention = data._source._buffers[3][0]['attention']
-  if(attention){
-    store.dispatch(updateAttention(attention));
-  }
+  // let attention = data._source._buffers[3][0]['attention']
+  // if(attention){
+  attention = store.getState()['attention'] + 1
+  console.log('\nattention:\n')
+  console.log(attention)
+    store.dispatch(updateAttention(attention))
+  // }
   return;
 });
+// once per second, log the state, and emit a call for the next reading
+setInterval(function () {
+  console.log(store.getState())
+  socket.emit('getData')
+}, 1000)
 
 // function refreshFrontEnd(number){
 
