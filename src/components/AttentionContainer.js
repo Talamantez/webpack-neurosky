@@ -1,11 +1,8 @@
-import { connect } from 'react-redux'
-import { updateAttention } from '../actions'
-import { AttentionView } from '../components/AttentionView'
+import { Component } from 'react';
 
 class AttentionContainer extends Component{
   render(){
-    let { attention } = this.props;
-    return <AttentionView attention={attention} {...this.boundActionCreators} />
+    return <div />
   }
 }
 
