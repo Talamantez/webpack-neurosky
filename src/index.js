@@ -69,15 +69,16 @@ let fireAttentionRequest = function(){
   console.log('firing attention request')
   new Promise(function(resolve, reject) {
     console.log('ballooogas')
-    resolve(store.getState().attention);
+    resolve(store.getState());
   }).then(
     function(val){
-      requestData(val);
+      drawCubes(geometry, val.attention, val.lastAttention);
+      renderAndRequest(val.attention);
     }
   )
 }
 
-function requestData(val){
+function renderAndRequest(val){
   console.log(val)
   const element = (
     <div>
@@ -99,7 +100,6 @@ setInterval(fireAttentionRequest, 1000);
 let container;
 let camera, controls, scene, renderer, geometry, difference;
 let objects = [];
-let loopCount = 0;
 let masterscope = {};
 
 init();
@@ -143,8 +143,6 @@ function init() {
 
     geometry = new THREE.BoxGeometry(40, 40, 40);
 
-    // drawCubes(geometry);
-
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -154,32 +152,14 @@ function init() {
 
     container.appendChild(renderer.domElement);
 
-    // let dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
-    // dragControls.addEventListener('dragstart', function(event) { controls.enabled = false; });
-    // dragControls.addEventListener('dragend', function(event) { controls.enabled = true; });
-
-    let info = document.createElement('div');
-    info.style.position = 'absolute';
-    info.style.top = '10px';
-    info.style.width = '100%';
-    info.style.textAlign = 'center';
-    info.innerHTML = '<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - draggable cubes';
-    container.appendChild(info);
-
-    // stats = new Stats();
-    // container.appendChild(stats.dom);
-
     window.addEventListener('resize', onWindowResize, false);
 
 }
 
-function drawCubes(geometry, attention) {
-    // console.log('testAttention: ' + testAttention);
-    // console.log('attention: ' + attention);
-    if (loopCount === 0) {
+function drawCubes(geometry, attention, testAttention) {
+  console.log('in Draw Cubes');
         console.log('loopin')
         for (let i = 0; i < attention; i++) {
-            console.log('in Draw Cubes');
             let object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
 
             object.position.x = Math.random() * 1000 - 500;
@@ -200,49 +180,7 @@ function drawCubes(geometry, attention) {
 
             scene.add(object);
             objects.push(object);
-        }
     }
-    if (attention < 40) {
-        for (let i = objects.length; i > attention; i--) {
-            scene.remove(objects[i]);
-        }
-    }
-    if (testAttention > attention) {
-        difference = testAttention - attention;
-        // console.log("\n\n\n" + "You're COOOOLING -" + difference + "\n\n");
-        for (let i = 0; i < objects.length; i++) {
-            objects[i].material.transparent = true;
-            objects[i].material.opacity = 0.5;
-        }
-    }
-    if (testAttention < attention) {
-        difference = attention - testAttention;
-        // console.log('\n\n\n' + 'GAINERER!!! +' + difference + '\n\n\n');
-        for (let i = 0; i < testAttention; i++) {
-            let object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
-            object.position.x = Math.random() * 1000 - 500;
-            object.position.y = Math.random() * 600 - 300;
-            object.position.z = Math.random() * 800 - 400;
-
-            object.rotation.x = Math.random() * 2 * Math.PI;
-            object.rotation.y = Math.random() * 2 * Math.PI;
-            object.rotation.z = Math.random() * 2 * Math.PI;
-
-            object.scale.x = Math.random() * 2 + 1;
-            object.scale.y = Math.random() * 2 + 1;
-            object.scale.z = Math.random() * 2 + 1;
-
-            object.castShadow = true;
-            object.receiveShadow = true;
-            object.name = 'cube' + i;
-
-            scene.add(object);
-
-            objects.push(object);
-        }
-    }
-    testAttention = attention;
-    loopCount++;
 }
 
 function onWindowResize() {
