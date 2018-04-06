@@ -11,13 +11,7 @@ import _ from 'lodash';
 import io from 'socket.io-client';
 import 'babel-polyfill';
 import * as THREE from 'three';
-// import AttentionContainer from './components/AttentionContainer'
-// import Button from './components/Button'
-
-// material-ui
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
+import Button from 'material-ui/Button';
 
 let attention = 0; // init attention value
 const SET_ATTENTION = 'SET_ATTENTION'; // set action value
@@ -55,9 +49,8 @@ const socket = io('http://127.0.0.1:4000'); // initialize websocket
 socket.on('data', function(data){
   let attention = data._source._buffers[3][0]['attention']
   if(attention){
-  // attention = store.getState().attention + 1
-  console.log('\nattention:\n')
-  console.log(attention)
+    console.log('\nattention:\n')
+    console.log(attention)
     store.dispatch(updateAttention(attention))
   }
   return;
@@ -83,12 +76,16 @@ function renderAndRequest(val){
   const element = (
     <div>
       <h1>Hello, world!</h1>
+      <Button variant="raised" color="primary">
+        Hello World
+      </Button>
       <h2>It is {val}.</h2>
     </div>
+
   );
   ReactDOM.render(
     element,
-    document.getElementById('root')
+    document.querySelector('#root')
   );
   socket.emit('getData')
 }
@@ -100,7 +97,6 @@ setInterval(fireAttentionRequest, 1000);
 let container;
 let camera, controls, scene, renderer, geometry, difference;
 let objects = [];
-let masterscope = {};
 
 init();
 
@@ -154,7 +150,7 @@ function drawCubes(geometry, attention, testAttention, objects) {
         light.shadow.bias = -0.00022;
         light.shadow.mapSize.width = 2048;
         light.shadow.mapSize.height = 2048;
-        scene.add(light);        
+        scene.add(light);
         for (let i = 0; i < attention; i++) {
             let object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
 
