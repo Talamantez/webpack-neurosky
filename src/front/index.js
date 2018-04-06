@@ -47,7 +47,9 @@ function updateAttention(number){
 const socket = io('http://127.0.0.1:4000'); // initialize websocket
 
 socket.on('data', function(data){
-  let attention = data._source._buffers[3][0]['attention']
+  let attention = data._source._buffers[3][0]['attention'] || null;
+  console.log('raw data: ');
+  console.dir(data);
   if(attention){
     console.log('\nattention:\n')
     console.log(attention)
@@ -61,7 +63,6 @@ socket.on('data', function(data){
 let fireAttentionRequest = function(){
   console.log('firing attention request')
   new Promise(function(resolve, reject) {
-    console.log('ballooogas')
     resolve(store.getState());
   }).then(
     function(val){
@@ -75,11 +76,10 @@ function renderAndRequest(val){
   console.log(val)
   const element = (
     <div>
-      <h1>Hello, world!</h1>
       <Button variant="raised" color="primary">
-        Hello World
+        Brain to Boxes
       </Button>
-      <h2>It is {val}.</h2>
+      <h2>Attention is {val}.</h2>
     </div>
 
   );
@@ -135,12 +135,13 @@ function init() {
 }
 
 function drawCubes(geometry, attention, testAttention, objects) {
-  console.log('in Draw Cubes');
-        console.log('loopin')
+        console.log('drawCubes');
 
+        // wipe objects
         while(scene.children.length > 0){
             scene.remove(scene.children[0]);
         }
+
         scene.add(new THREE.AmbientLight(0x505050));
 
         let light = new THREE.SpotLight(0xffffff, 1.5);

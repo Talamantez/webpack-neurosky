@@ -1,10 +1,12 @@
 // backend server
 
-const express = require('express');
-const Mindwave = require('mindwave');
-const kefir = require('kefir');
-const mw = new Mindwave();
-const fs = require('fs');
+const  express = require('express');
+const  Mindwave = require('mindwave');
+const  kefir = require('kefir');
+const  fs = require('fs');
+
+const  mw = new Mindwave();
+
 
 let nodeModules = {};
 

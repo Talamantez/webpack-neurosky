@@ -2,10 +2,12 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
-module.exports = {
-  entry: './src/index.js',
+const config = {
+  entry: {
+    front: './src/front/index.js'
+  },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/dist'
   },
@@ -29,7 +31,9 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-       template: 'src/index.html'
+       template: 'src/front/index.html'
     })
   ]
 };
+
+module.exports = config;
