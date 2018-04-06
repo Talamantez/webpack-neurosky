@@ -12,7 +12,7 @@ import io from 'socket.io-client';
 import 'babel-polyfill';
 import * as THREE from 'three';
 import Button from 'material-ui/Button';
-let index = 0;
+
 let attention = 0; // init attention value
 const SET_BRAIN_DATA = 'SET_BRAIN_DATA'; // set action value
 // init app state
@@ -29,9 +29,10 @@ function attentionApp(state = initialState, action) {
     switch(action.type){
       case 'SET_BRAIN_DATA':
         return Object.assign({}, state, {
-          attention: action.object.attention,
+          attention: action.number,
           lastAttention: state.attention,
-          change: -(state.attention-action.number)
+          change: -(state.attention-action.number),
+          meditation: action.meditation
         })
       default:
         return state;
@@ -48,13 +49,9 @@ function updateBrainData(object){
 const socket = io('http://127.0.0.1:4000'); // initialize websocket
 
 socket.on('data', function(data){
+    // console.dir(data._source._buffers);
 
-    if( data._source._buffers[2] ){
-      console.log(data._source._buffers[2]["0"]);
-      store.dispatch(updateBrainData(data._source._buffers[2]["0"]))
-    } else {
-      console.log('data not found')
-    }
+    // store.dispatch(updateBrainData(data._source._buffers[3][0]))
   return;
 });
 
