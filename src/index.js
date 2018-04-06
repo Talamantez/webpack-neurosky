@@ -53,13 +53,13 @@ function updateAttention(number){
 const socket = io('http://127.0.0.1:4000'); // initialize websocket
 
 socket.on('data', function(data){
-  // let attention = data._source._buffers[3][0]['attention']
-  // if(attention){
-  attention = store.getState().attention + 1
+  let attention = data._source._buffers[3][0]['attention']
+  if(attention){
+  // attention = store.getState().attention + 1
   console.log('\nattention:\n')
   console.log(attention)
     store.dispatch(updateAttention(attention))
-  // }
+  }
   return;
 });
 
@@ -103,7 +103,6 @@ let objects = [];
 let masterscope = {};
 
 init();
-animate();
 
 function init() {
 
@@ -113,52 +112,39 @@ function init() {
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
     camera.position.z = 1000;
 
-    // controls = new THREE.TrackballControls(camera);
-    // controls.rotateSpeed = 1.0;
-    // controls.zoomSpeed = 1.2;
-    // controls.panSpeed = 0.8;
-    // controls.noZoom = false;
-    // controls.noPan = false;
-    // controls.staticMoving = true;
-    // controls.dynamicDampingFactor = 0.3;
-
     scene = new THREE.Scene();
-    // console.log('scene:');
-    // console.dir(scene);
     scene.background = new THREE.Color(0xf0f0f0);
-
     scene.add(new THREE.AmbientLight(0x505050));
 
     let light = new THREE.SpotLight(0xffffff, 1.5);
     light.position.set(0, 500, 2000);
     light.castShadow = true;
-
     light.shadow = new THREE.LightShadow(new THREE.PerspectiveCamera(50, 1, 200, 10000));
     light.shadow.bias = -0.00022;
-
     light.shadow.mapSize.width = 2048;
     light.shadow.mapSize.height = 2048;
-
     scene.add(light);
 
     geometry = new THREE.BoxGeometry(40, 40, 40);
-
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
 
     container.appendChild(renderer.domElement);
 
     window.addEventListener('resize', onWindowResize, false);
-
+    animate();
 }
 
 function drawCubes(geometry, attention, testAttention) {
   console.log('in Draw Cubes');
         console.log('loopin')
+        objects=[];
+        while(scene.children.length > 0){
+            scene.remove(scene.children[0]);
+        }
         for (let i = 0; i < attention; i++) {
             let object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
 
@@ -191,8 +177,6 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 
 }
-
-//
 
 function animate() {
 
