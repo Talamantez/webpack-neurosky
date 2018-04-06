@@ -72,7 +72,7 @@ let fireAttentionRequest = function(){
     resolve(store.getState());
   }).then(
     function(val){
-      drawCubes(geometry, val.attention, val.lastAttention);
+      drawCubes(geometry, val.attention, val.lastAttention, objects);
       renderAndRequest(val.attention);
     }
   )
@@ -138,13 +138,23 @@ function init() {
     animate();
 }
 
-function drawCubes(geometry, attention, testAttention) {
+function drawCubes(geometry, attention, testAttention, objects) {
   console.log('in Draw Cubes');
         console.log('loopin')
-        objects=[];
+
         while(scene.children.length > 0){
             scene.remove(scene.children[0]);
         }
+        scene.add(new THREE.AmbientLight(0x505050));
+
+        let light = new THREE.SpotLight(0xffffff, 1.5);
+        light.position.set(0, 500, 2000);
+        light.castShadow = true;
+        light.shadow = new THREE.LightShadow(new THREE.PerspectiveCamera(50, 1, 200, 10000));
+        light.shadow.bias = -0.00022;
+        light.shadow.mapSize.width = 2048;
+        light.shadow.mapSize.height = 2048;
+        scene.add(light);        
         for (let i = 0; i < attention; i++) {
             let object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
 
