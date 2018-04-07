@@ -12,6 +12,10 @@ import io from 'socket.io-client';
 import 'babel-polyfill';
 import * as THREE from 'three';
 import Button from 'material-ui/Button';
+import { timeSeries } from "pondjs";
+import Grid from 'material-ui/Grid';
+import Paper from 'material-ui/Paper';
+
 let index = 0;
 let attention = 0; // init attention value
 const SET_BRAIN_DATA = 'SET_BRAIN_DATA'; // set action value
@@ -19,19 +23,23 @@ const SET_BRAIN_DATA = 'SET_BRAIN_DATA'; // set action value
 const initialState = {
   attention: 0,
   lastAttention: 0,
-  meditation: 0
+  change: 0,
+  eeg: {},
+
 }
 
 const store = createStore(attentionApp); // initialize store
 
 // app
 function attentionApp(state = initialState, action) {
+    console.log(state);
     switch(action.type){
       case 'SET_BRAIN_DATA':
         return Object.assign({}, state, {
-          attention: action.object.attention,
+          attention: action.object.attention.attention,
           lastAttention: state.attention,
-          change: -(state.attention-action.number)
+          change: -(state.attention-action.object.attention.attention),
+          eeg: action.object.eeg.eeg
         })
       default:
         return state;
@@ -48,10 +56,14 @@ function updateBrainData(object){
 const socket = io('http://127.0.0.1:4000'); // initialize websocket
 
 socket.on('data', function(data){
-
+    console.dir(data);
     if( data._source._buffers[2] ){
-      console.log(data._source._buffers[2]["0"]);
-      store.dispatch(updateBrainData(data._source._buffers[2]["0"]))
+      store.dispatch(updateBrainData(
+        {
+          attention: data._source._buffers[2]["0"],
+          eeg: data._source._buffers[0]["0"]
+        }
+    ))
     } else {
       console.log('data not found')
     }
@@ -65,27 +77,35 @@ let fireAttentionRequest = function(){
   new Promise(function(resolve, reject) {
     resolve(store.getState());
   }).then(
-    function(val){
+    function(state){
       // wipe and redraw 3js Cubes
-      drawCubes(geometry, val.attention, val.lastAttention, objects);
+      drawCubes(geometry, state.attention, state.lastAttention, objects);
       // render React Components and Trigger request
       // for next data point
-      renderAndRequest(val);
+      renderAndRequest(state);
     }
   )
 }
 
-function renderAndRequest(object){
-  const element = (
-    <div>
-      <Button variant="raised" color="primary">
-        Brain to Boxes
-      </Button>
-      <h2>Attention is {object.attention}.</h2>
-      <h2>Meditation is {object.meditation}.</h2>
-    </div>
 
+
+function renderAndRequest(state){
+  const element = (
+    <Grid item xs={6} sm={3}>
+      <div id="data">
+        <h2>Attention : {state.attention}</h2>
+        <h2>delta : {state.eeg.delta}</h2>
+        <h2>theta : {state.eeg.theta}</h2>
+        <h2>loAlpha : {state.eeg.loAlpha}</h2>
+        <h2>hiAlpha : {state.eeg.hiAlpha}</h2>
+        <h2>loBeta : {state.eeg.loBeta}</h2>
+        <h2>hiBeta : {state.eeg.hiBeta}</h2>
+        <h2>loGamma : {state.eeg.loGamma}</h2>
+        <h2>midGamma : {state.eeg.midGamma}</h2>
+      </div>
+    </Grid>
   );
+
   ReactDOM.render(
     element,
     document.querySelector('#root')
@@ -101,11 +121,11 @@ let container;
 let camera, controls, scene, renderer, geometry, difference;
 let objects = [];
 
-init();
+document.body.onload = init;
 
 function init() {
 
-    container = document.createElement('div');
+    container = document.getElementById('container');
     document.body.appendChild(container);
 
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);

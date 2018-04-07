@@ -57,8 +57,7 @@ const outS = kefir.zip([
     // waveS,
 ]).map(toObj)
 
-outS.log();
-
+ outS.log();
 
 console.log('connecting to mindwave');
 mw.connect('/dev/cu.MindWaveMobile-DevA');
@@ -66,6 +65,6 @@ mw.connect('/dev/cu.MindWaveMobile-DevA');
 io.on('connection', function(socket) {
     socket.on('getData', function() {
         console.log('data requested');
-        socket.emit('data', outS.log());
+        socket.emit('data', outS);
     });
 });

@@ -61,6 +61,8 @@ npm manifest:
       "lodash": "^4.17.5",
       "material-ui": "^1.0.0-beta.40",
       "mindwave": "^0.0.4",
+      "pondjs": "1.0.0-alpha.4",
+      "prop-types": "^15.6.1",
       "react": "^16.3.0",
       "react-d3-basic": "^1.6.11",
       "react-dom": "^16.3.0",
@@ -4063,6 +4065,10 @@ Lockfile:
     version "3.0.6"
     resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.0.6.tgz#9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b"
   
+  immutable@^4.0.0-rc.9:
+    version "4.0.0-rc.9"
+    resolved "https://registry.yarnpkg.com/immutable/-/immutable-4.0.0-rc.9.tgz#1e6e0094e649013ec3742d2b5aeeca5eeda4f0bf"
+  
   imurmurhash@^0.1.4:
     version "0.1.4"
     resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
@@ -5250,6 +5256,16 @@ Lockfile:
     dependencies:
       minimist "0.0.8"
   
+  moment-timezone@^0.5.13:
+    version "0.5.14"
+    resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.14.tgz#4eb38ff9538b80108ba467a458f3ed4268ccfcb1"
+    dependencies:
+      moment ">= 2.9.0"
+  
+  "moment@>= 2.9.0", moment@^2.18.1:
+    version "2.22.0"
+    resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.0.tgz#7921ade01017dd45186e7fee5f424f0b8663a730"
+  
   move-concurrently@^1.0.1:
     version "1.0.1"
     resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -5923,6 +5939,15 @@ Lockfile:
     version "7.0.0"
     resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-7.0.0.tgz#298b89df8b93b0221dbf421ad2b1b1ea23fc6777"
   
+  pondjs@1.0.0-alpha.4:
+    version "1.0.0-alpha.4"
+    resolved "https://registry.yarnpkg.com/pondjs/-/pondjs-1.0.0-alpha.4.tgz#046a4d0cc77fd1c22e50c0fbe4ad4907d7aa5ecf"
+    dependencies:
+      immutable "^4.0.0-rc.9"
+      lodash "^4.17.4"
+      moment "^2.18.1"
+      moment-timezone "^0.5.13"
+  
   popper.js@^1.12.9:
     version "1.14.3"
     resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.14.3.tgz#1438f98d046acf7b4d78cd502bf418ac64d4f095"
@@ -6238,7 +6263,7 @@ Lockfile:
     dependencies:
       asap "~2.0.3"
   
-  prop-types@^15.5.4, prop-types@^15.5.8, prop-types@^15.6.0:
+  prop-types@^15.5.4, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1:
     version "15.6.1"
     resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.1.tgz#36644453564255ddda391191fb3a125cbdf654ca"
     dependencies:
