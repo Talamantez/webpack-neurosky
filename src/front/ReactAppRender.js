@@ -4,6 +4,9 @@ import ReactDOM from 'react-dom';
 import Grid from 'material-ui/Grid';
 
 function ReactAppRender(state){
+  if(!state){
+    throw new Error('ReactAppRender needs a state to run');
+  }
   const element = (
     <Grid item xs={6} sm={3}>
       <div id="data">

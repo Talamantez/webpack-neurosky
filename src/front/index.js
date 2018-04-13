@@ -1,6 +1,3 @@
-import React from 'react';
-import { Component } from 'react';
-import ReactDOM from 'react-dom';
 import { bindActionCreators } from 'redux';
 import { createStore } from 'redux';
 import { combineReducers } from 'redux';
@@ -12,7 +9,7 @@ import io from 'socket.io-client';
 import 'babel-polyfill';
 import Button from 'material-ui/Button';
 import { timeSeries } from "pondjs";
-import Grid from 'material-ui/Grid';
+
 import Paper from 'material-ui/Paper';
 import reactAppRender from './ReactAppRender.js'
 
@@ -20,7 +17,7 @@ import Muppeteer from './Muppeteer.js';
 
 let muppeteer = new Muppeteer();
 
-let version = '7'
+let version = '8'
 let index = 0;
 let attention = 0; // init attention value
 
@@ -68,11 +65,30 @@ function updateBrainData(object){
 }
 
 
-const socket = io('http://127.0.0.1:4000'); // initialize websocket
+// const socket = io('http://127.0.0.1:4000'); // initialize websocket
 
-socket.on('data', function(data){
-    // console.dir(data);
-    attention = data._source._buffers[2][0] || null;
+// socket.on('data', function(data){
+//     // console.dir(data);
+//     attention = data._source._buffers[2][0] || null;
+//       store.dispatch(
+//         updateBrainData(
+//           {
+//             signal: data._source._buffers[1][0],
+//             attention: attention,
+//             eeg: data._source._buffers[0][0]
+//           }
+//         )
+//       )
+//   return;
+// });
+
+function parseDataDispatchToStore(data){
+
+  if(!data){
+    console.log('no data')
+  }else{
+
+      attention = data._source._buffers[2][0] || null;
       store.dispatch(
         updateBrainData(
           {
@@ -82,10 +98,21 @@ socket.on('data', function(data){
           }
         )
       )
-  return;
+  }
+}
+let dataListener = function(message, callback){
+  var self = this;
+  self.socket = io('http://127.0.0.1:4000');
+  self.socket.on(message, function(data){
+      if(callback && data){
+        callback(data)
+      }
+  });
+}
+
+let brainDataListener = new dataListener('data',  function(data){
+  parseDataDispatchToStore(data);
 });
-
-
 
 let fireAttentionRequest = function(){
   console.log('V' + version)
@@ -101,22 +128,15 @@ let fireAttentionRequest = function(){
       }else{
         muppeteer.drawCubes(muppeteer.geometry, state.attention, state.lastAttention, muppeteer.objects);
       }
-      // console.log('Fired Attention Request. state:');
-      // console.dir(state);
-      // render React Components and Trigger request
-      // for next data point
+      // draw React App using Redux's state
       reactAppRender(state)
-
     }
   ).then( getData )
 }
 
 
 function getData() {
-  socket.emit('getData');
+  brainDataListener.socket.emit('getData');
 }
 // once per second, log the state,render a new element, and emit a call for the next reading
 setInterval(fireAttentionRequest, 1000);
-// document.body.onload = function(){
-//
-// }
