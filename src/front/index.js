@@ -14,18 +14,18 @@ import Button from 'material-ui/Button';
 import { timeSeries } from "pondjs";
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
-
+import reactAppRender from './ReactAppRender.js'
 
 import Muppeteer from './Muppeteer.js';
 
 let muppeteer = new Muppeteer();
 
-let version = '5'
+let version = '7'
 let index = 0;
 let attention = 0; // init attention value
 
 const SET_BRAIN_DATA = 'SET_BRAIN_DATA'; // set action value
-// init app state
+// init redux app state
 const initialState = {
   signal: 0,
   attention: 0,
@@ -34,10 +34,8 @@ const initialState = {
   eeg: {},
   meditation: 0
 }
-
-const store = createStore(attentionApp); // initialize store
-
-// app
+const store = createStore(attentionApp); // initialize redux store
+// init redux app
 function attentionApp(state = initialState, action) {
     if(!action){
       throw new Error('action is not working, dear programmer')
@@ -61,13 +59,14 @@ function attentionApp(state = initialState, action) {
       }
     }
 }
-// action creator: update attention
+// redux action creator: update attention
 function updateBrainData(object){
     return{
       type: SET_BRAIN_DATA,
       object
     }
 }
+
 
 const socket = io('http://127.0.0.1:4000'); // initialize websocket
 
@@ -85,6 +84,8 @@ socket.on('data', function(data){
       )
   return;
 });
+
+
 
 let fireAttentionRequest = function(){
   console.log('V' + version)
@@ -110,27 +111,6 @@ let fireAttentionRequest = function(){
   ).then( getData )
 }
 
-function reactAppRender(state){
-  const element = (
-    <Grid item xs={6} sm={3}>
-      <div id="data">
-        <h2>Attention : {state.attention}</h2>
-        <h2>delta : {state.eeg.delta}</h2>
-        <h2>theta : {state.eeg.theta}</h2>
-        <h2>loAlpha : {state.eeg.loAlpha}</h2>
-        <h2>hiAlpha : {state.eeg.hiAlpha}</h2>
-        <h2>loBeta : {state.eeg.loBeta}</h2>
-        <h2>hiBeta : {state.eeg.hiBeta}</h2>
-        <h2>loGamma : {state.eeg.loGamma}</h2>
-        <h2>midGamma : {state.eeg.midGamma}</h2>
-      </div>
-    </Grid>
-  );
-  ReactDOM.render(
-    element,
-    document.querySelector('#root')
-  );
-}
 
 function getData() {
   socket.emit('getData');
