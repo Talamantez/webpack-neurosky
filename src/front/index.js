@@ -21,10 +21,12 @@ let attention = 0; // init attention value
 const SET_BRAIN_DATA = 'SET_BRAIN_DATA'; // set action value
 // init app state
 const initialState = {
+  signal: 0,
   attention: 0,
   lastAttention: 0,
   change: 0,
   eeg: {},
+  meditation: 0,
 
 }
 
@@ -32,14 +34,19 @@ const store = createStore(attentionApp); // initialize store
 
 // app
 function attentionApp(state = initialState, action) {
-    console.log(state);
+  console.log(action);
     switch(action.type){
       case 'SET_BRAIN_DATA':
+        let attention = action.object.attention.attention;
+        let eeg = action.object.eeg.eeg;
+        if(action.object){
+          console.log(action.object)
+        }
         return Object.assign({}, state, {
-          attention: action.object.attention.attention,
+          attention: attention,
           lastAttention: state.attention,
-          change: -(state.attention-action.object.attention.attention),
-          eeg: action.object.eeg.eeg
+          change: -(state.attention-attention),
+          eeg: eeg
         })
       default:
         return state;
@@ -57,16 +64,16 @@ const socket = io('http://127.0.0.1:4000'); // initialize websocket
 
 socket.on('data', function(data){
     console.dir(data);
-    if( data._source._buffers[2] ){
-      store.dispatch(updateBrainData(
-        {
-          attention: data._source._buffers[2]["0"],
-          eeg: data._source._buffers[0]["0"]
-        }
-    ))
-    } else {
-      console.log('data not found')
-    }
+    attention = data._source._buffers[2][0] || null;
+      store.dispatch(
+        updateBrainData(
+          {
+            signal: data._source._buffers[1][0],
+            attention: attention,
+            eeg: data._source._buffers[0][0]
+          }
+        )
+      )
   return;
 });
 
