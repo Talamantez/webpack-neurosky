@@ -5,15 +5,17 @@ import { connect } from 'react-redux';
 import { isFSA } from 'flux-standard-action';
 import { isError } from 'flux-standard-action';
 import _ from 'lodash';
-import io from 'socket.io-client';
+
 import 'babel-polyfill';
 import Button from 'material-ui/Button';
 import { timeSeries } from "pondjs";
+
 
 import Paper from 'material-ui/Paper';
 import reactAppRender from './ReactAppRender.js'
 
 import Muppeteer from './Muppeteer.js';
+import DataListener from './DataListener.js';
 
 let muppeteer = new Muppeteer();
 
@@ -36,8 +38,7 @@ const store = createStore(attentionApp); // initialize redux store
 function attentionApp(state = initialState, action) {
     if(!action){
       throw new Error('action is not working, dear programmer')
-    }
-    else{
+    } else {
       switch(action.type){
         case 'SET_BRAIN_DATA':
           let attention = action.object.attention.attention;
@@ -63,30 +64,11 @@ function updateBrainData(object){
       object
     }
 }
-
-
-// const socket = io('http://127.0.0.1:4000'); // initialize websocket
-
-// socket.on('data', function(data){
-//     // console.dir(data);
-//     attention = data._source._buffers[2][0] || null;
-//       store.dispatch(
-//         updateBrainData(
-//           {
-//             signal: data._source._buffers[1][0],
-//             attention: attention,
-//             eeg: data._source._buffers[0][0]
-//           }
-//         )
-//       )
-//   return;
-// });
-
 function parseDataDispatchToStore(data){
 
   if(!data){
     console.log('no data')
-  }else{
+  } else {
 
       attention = data._source._buffers[2][0] || null;
       store.dispatch(
@@ -100,17 +82,8 @@ function parseDataDispatchToStore(data){
       )
   }
 }
-let dataListener = function(message, callback){
-  var self = this;
-  self.socket = io('http://127.0.0.1:4000');
-  self.socket.on(message, function(data){
-      if(callback && data){
-        callback(data)
-      }
-  });
-}
 
-let brainDataListener = new dataListener('data',  function(data){
+let brainDataListener = new DataListener('4000','data',  function(data){
   parseDataDispatchToStore(data);
 });
 
@@ -125,7 +98,7 @@ let fireAttentionRequest = function(){
       // wipe and redraw 3js Cubes
       if(!muppeteer){
         console.log('waiting for muppeteer to drawCubes');
-      }else{
+      } else {
         muppeteer.drawCubes(muppeteer.geometry, state.attention, state.lastAttention, muppeteer.objects);
       }
       // draw React App using Redux's state
@@ -133,7 +106,6 @@ let fireAttentionRequest = function(){
     }
   ).then( getData )
 }
-
 
 function getData() {
   brainDataListener.socket.emit('getData');
