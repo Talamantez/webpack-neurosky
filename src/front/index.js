@@ -5,6 +5,10 @@ import { connect } from 'react-redux';
 import { isFSA } from 'flux-standard-action';
 import { isError } from 'flux-standard-action';
 import _ from 'lodash';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import Readout from './Readout.js'
 
 import 'babel-polyfill';
 import Button from 'material-ui/Button';
@@ -43,9 +47,6 @@ function attentionApp(state = initialState, action) {
         case 'SET_BRAIN_DATA':
           let attention = action.object.attention.attention;
           let eeg = action.object.eeg.eeg;
-          // if(action.object){
-          //   console.log(action.object)
-          // }
           return Object.assign({}, state, {
             attention: attention,
             lastAttention: state.attention,
@@ -102,7 +103,22 @@ let fireAttentionRequest = function(){
         muppeteer.drawCubes(muppeteer.geometry, state.attention, state.lastAttention, muppeteer.objects);
       }
       // draw React App using Redux's state
-      reactAppRender(state)
+      // reactAppRender(state)
+      const props = {
+        attention: state.attention,
+        delta: state.eeg.delta,
+        theta: state.eeg.theta,
+        loAlpha: state.eeg.loAlpha,
+        hiAlpha: state.eeg.hiAlpha,
+        loBeta: state.eeg.loBeta,
+        hiBeta: state.eeg.hiBeta,
+        loGamma: state.eeg.loGamma,
+        hiGamma: state.eeg.hiGamma,
+      }
+      const element = <Readout {...props}/>
+      ReactDOM.render(
+        element, document.getElementById('root')
+      )
     }
   ).then( getData )
 }
