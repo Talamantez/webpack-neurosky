@@ -11,12 +11,6 @@ import ReactDOM from 'react-dom';
 import Readout from './Readout.js'
 
 import 'babel-polyfill';
-import Button from 'material-ui/Button';
-import { timeSeries } from "pondjs";
-
-
-import Paper from 'material-ui/Paper';
-import reactAppRender from './ReactAppRender.js'
 
 import Muppeteer from './Muppeteer.js';
 import DataListener from './DataListener.js';
@@ -98,22 +92,26 @@ let fireAttentionRequest = function(){
     function(state){
       // wipe and redraw 3js Cubes
       if(!muppeteer){
-        console.log('waiting for muppeteer to drawCubes');
+        console.log('waiting for muppeteer to load before drawing cubes');
       } else {
-        muppeteer.drawCubes(muppeteer.geometry, state.attention, state.lastAttention, muppeteer.objects);
+        muppeteer.drawCubes(
+          muppeteer.geometry,
+          state.attention,
+          state.lastAttention,
+          muppeteer.objects
+        );
       }
       // draw React App using Redux's state
-      // reactAppRender(state)
       const props = {
-        attention: state.attention,
-        delta: state.eeg.delta,
-        theta: state.eeg.theta,
-        loAlpha: state.eeg.loAlpha,
-        hiAlpha: state.eeg.hiAlpha,
-        loBeta: state.eeg.loBeta,
-        hiBeta: state.eeg.hiBeta,
-        loGamma: state.eeg.loGamma,
-        hiGamma: state.eeg.hiGamma,
+        attention:   state.attention,
+        delta:       state.eeg.delta,
+        theta:       state.eeg.theta,
+        loAlpha:     state.eeg.loAlpha,
+        hiAlpha:     state.eeg.hiAlpha,
+        loBeta:      state.eeg.loBeta,
+        hiBeta:      state.eeg.hiBeta,
+        loGamma:     state.eeg.loGamma,
+        hiGamma:     state.eeg.hiGamma,
       }
       const element = <Readout {...props}/>
       ReactDOM.render(

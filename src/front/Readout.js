@@ -5,28 +5,17 @@ class Readout extends React.Component{
     super(props)
   }
   render(){
-    let readings = [
-      'attention',
-      'delta',
-      'theta',
-      'loAlpha',
-      'hiAlpha',
-      'loBeta',
-      'hiBeta',
-      'loGamma',
-      'hiGamma',
-    ]
-
     return (
       <div id="data">
           {
-            readings.map(
+            Object.keys(this.props).map(
               (r,i) => (
-                <p>{r}, {this.props[r]} at index {i}!</p>
-          )
-        )
-        }
-      </div>)
+                <div className='reading' key={r}> {r}: {this.props[r]}!</div>
+              )
+            )
+          }
+      </div>
+    )
   }
 }
 
