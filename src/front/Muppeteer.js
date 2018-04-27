@@ -89,7 +89,7 @@ let Muppeteer = function(){
           self.light.shadow.mapSize.width = 2048;
           self.light.shadow.mapSize.height = 2048;
           self.scene.add(self.light);
-          for (let i = 0; i < 10; i++) {
+          for (let i = 0; i < attention; i++) {
               let object = new THREE.Mesh(self.geometry, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
 
               object.position.x = Math.random() * 1000 - 500;
