@@ -12,10 +12,17 @@ import Readout from './Readout.js'
 
 import 'babel-polyfill';
 
-import Muppeteer from './Muppeteer.js';
 import DataListener from './DataListener.js';
+import Graphics from './Graphics.js';
 
-let muppeteer = new Muppeteer();
+let graphics = new Graphics(
+          document.getElementById('container'),
+          document.getElementById('wrapper')
+        );
+console.log('\ngraphics:');
+console.dir(graphics);
+console.log('\n');
+
 
 let version = '8'
 let index = 0;
@@ -91,14 +98,13 @@ let fireAttentionRequest = function(){
   }).then(
     function(state){
       // wipe and redraw 3js Cubes
-      if(!muppeteer){
-        console.log('waiting for muppeteer to load before drawing cubes');
+      if(!graphics){
+        console.log('waiting for graphics to load before drawing cubes');
       } else {
-        muppeteer.drawCubes(
-          muppeteer.geometry,
+        graphics.drawCubes(
+          graphics.geometry,
           state.attention,
-          state.lastAttention,
-          muppeteer.objects
+          graphics.objects
         );
       }
       // draw React App using Redux's state

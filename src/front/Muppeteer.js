@@ -116,9 +116,7 @@ let Muppeteer = function(){
   self.animate = function() {
       // console.log('animating');
       requestAnimationFrame(self.animate);
-
       self.render();
-
   }
 
   self.init();
