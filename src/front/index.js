@@ -8,6 +8,8 @@ import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import UpdateBrainData from './UpdateBrainData.js'
+
 import Readout from './Readout.js'
 
 import 'babel-polyfill';
@@ -19,8 +21,8 @@ let graphics = new Graphics(
           document.getElementById('container'),
           document.getElementById('wrapper')
         );
-console.log('\ngraphics:');
-console.dir(graphics);
+console.log('\nUpdateBrainData:');
+console.dir(UpdateBrainData);
 console.log('\n');
 
 
@@ -59,13 +61,31 @@ function attentionApp(state = initialState, action) {
       }
     }
 }
-// redux action creator: update attention
-function updateBrainData(object){
-    return{
-      type: SET_BRAIN_DATA,
-      object
-    }
+
+function mockDataDispatchToStore(){
+
+
+
+  store.dispatch(
+    UpdateBrainData(
+      {
+        signal: 0,
+        attention: Math.floor( Math.random() * 90 ),
+        eeg: {
+          delta: Math.floor( Math.random() * 200000) + 100000,
+          theta: Math.floor( Math.random() * 200000) + 100000,
+          loBeta: Math.floor( Math.random() * 200000) + 100000,
+          hiBeta: Math.floor( Math.random() * 200000) + 100000,
+          loAlpha: Math.floor( Math.random() * 200000) + 100000,
+          hiAlpha: Math.floor( Math.random() * 200000) + 100000,
+          loGamma: Math.floor( Math.random() * 200000) + 100000,
+          hiGamma: Math.floor( Math.random() * 200000) + 100000
+        }
+      }
+    )
+  )
 }
+
 function parseDataDispatchToStore(data){
 
   if(!data){
@@ -74,7 +94,7 @@ function parseDataDispatchToStore(data){
 
       attention = data._source._buffers[2][0] || null;
       store.dispatch(
-        updateBrainData(
+        UpdateBrainData(
           {
             signal: data._source._buffers[1][0],
             attention: attention,
@@ -129,6 +149,7 @@ let fireAttentionRequest = function(){
 
 function getData() {
   brainDataListener.socket.emit('getData');
+  // mockDataDispatchToStore();
 }
 // once per second, log the state,render a new element, and emit a call for the next reading
 setInterval(fireAttentionRequest, 1000);
