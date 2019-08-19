@@ -46,7 +46,7 @@
     "kefir": "^3.8.3",
     "lodash": "^4.17.5",
     "material-ui": "^1.0.0-beta.40",
-    "mindwave": "^0.0.4",
+    "mindwave2": "github:talamantez/mindwave",
     "ngrok": "^3.0.1",
     "pondjs": "1.0.0-alpha.4",
     "prop-types": "^15.6.1",
@@ -56,6 +56,7 @@
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
+    "serialport": "^7.0.2",
     "socketio": "^1.0.0",
     "three": "^0.91.0",
     "url-loader": "^1.0.1"

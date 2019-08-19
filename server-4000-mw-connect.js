@@ -1,7 +1,7 @@
 // backend server
 
 const  express = require('express');
-const  Mindwave = require('mindwave');
+const  Mindwave = require('mindwave2');
 const  kefir = require('kefir');
 const  fs = require('fs');
 
@@ -59,8 +59,56 @@ const outS = kefir.zip([
 
  outS.log();
 
+ const getBluetoothDevicePaths = (path) => {
+    const bluetoothDevicePaths = []
+    fs.readdir(path, function(err, items) {
+        // console.log(items);
+
+        // fs.writeFileSync('dev_directory.txt', items)
+        for (var i=0; i<items.length; i++) {
+            // console.log(items[i]);
+            // For TTY
+            //  match path prefixed by 'tty.MindWaveMobile-Dev'
+            //  also include tty.Bluetooth-Incoming-Port
+            // ".includes('tty.MindWave-Mobile-Dev')"
+            // or "=== tty.Bluetooth-Incoming-Port'"
+            const mindwaveMobileDevPathsTTY = 'tty.MindWaveMobile-Dev'
+            // For CU
+            //  match path prefixed by 'cu.MindWaveMobile-Dev'
+            //  also include cu.Bluetooth-Incoming-Port
+            // ".includes('cu.MindWave-Mobile-Dev')"
+            // or "=== cu.Bluetooth-Incoming-Port'"
+            const itemName = items[i].toString()
+            if(itemName.includes('cu.MindWaveMobile-DevA')){
+                mw.connect(itemName)
+                console.log('connecting to ', itemName)
+                bluetoothDevicePaths.push(items[i])
+            }
+        }
+    })
+    return bluetoothDevicePaths
+}
 console.log('connecting to mindwave');
-mw.connect('/dev/cu.MindWaveMobile-DevA');
+// const path = '/dev/cu.MindWaveMobile-DevA';
+const path = '/dev';
+
+const bluetoothDevicePaths = getBluetoothDevicePaths(path)
+
+console.log(bluetoothDevicePaths.length)
+// for (let i = 0; i<bluetoothDevicePaths.length;i++){
+//     console.log('connecting to ', bluetoothDevicePaths[i])
+//     mw.connect(path);
+// }
+
+// fs.readdir(path, function(err, items) {
+//     console.log(items);
+//     fs.writeFileSync('dev_directory.txt', items)
+//     for (var i=0; i<items.length; i++) {
+//         console.log(items[i]);
+//     }
+// });
+
+
 
 io.on('connection', function(socket) {
     socket.on('getData', function() {
