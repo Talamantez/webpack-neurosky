@@ -57,7 +57,7 @@
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
     "socketio": "^1.0.0",
-    "three": "^0.91.0",
+    "three": "^0.125.0",
     "url-loader": "^1.0.1"
   }
 }
