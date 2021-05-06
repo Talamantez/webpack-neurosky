@@ -44,7 +44,7 @@
     "flux-standard-action": "^2.0.1",
     "fs": "^0.0.1-security",
     "kefir": "^3.8.3",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.21",
     "material-ui": "^1.0.0-beta.40",
     "mindwave": "^0.0.4",
     "ngrok": "^3.0.1",
