@@ -151,5 +151,5 @@ function getData() {
   brainDataListener.socket.emit('getData');
   // mockDataDispatchToStore();
 }
-// once per second, log the state,render a new element, and emit a call for the next reading
+// once per second, log the state, render a new element, and emit a call for the next reading
 setInterval(fireAttentionRequest, 1000);
